@@ -1,12 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './core/header/header';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+    selector: 'app-root',
+    standalone: true,
+    imports: [RouterOutlet, HeaderComponent],
+    templateUrl: './app.html',
+    styleUrls: ['./app.scss']
 })
-export class App {
-  protected readonly title = signal('tutorial');
+export class AppComponent {
+    protected readonly title = signal('Tutorial de Angular');
 }
