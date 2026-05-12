@@ -3,8 +3,8 @@ import { Observable, of } from 'rxjs';
 import { Pageable } from '../core/model/page/Pageable';
 import { Author } from './model/Author';
 import { PaginatedData } from '../core/model/page/PaginatedData';
-import { AUTHOR_DATA } from './mock-authors';
 import { HttpClient } from '@angular/common/http';
+import { AUTHOR_DATA_LIST } from './mock-authors-list';
 
 @Injectable({
     providedIn: 'root',
@@ -31,5 +31,9 @@ export class AuthorService {
 
     deleteAuthor(idAuthor: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${idAuthor}`);
+    }
+
+    getAllAuthors(): Observable<Author[]> {
+        return this.http.get<Author[]>(this.baseUrl);
     }
 }
