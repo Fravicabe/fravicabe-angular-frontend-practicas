@@ -1,31 +1,32 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-dialog-confirmation',
-  templateUrl: './dialog-confirmation.html',
-  styleUrls: ['./dialog-confirmation.scss']
+    selector: 'app-dialog-confirmation',
+    standalone: true,
+    imports: [CommonModule, MatDialogModule, MatButtonModule],
+    templateUrl: './dialog-confirmation.html',
+    styleUrl: './dialog-confirmation.scss'
 })
 export class DialogConfirmationComponent implements OnInit {
+    protected readonly dialogRef = inject(MatDialogRef<DialogConfirmationComponent>);
+    protected readonly data = inject(MAT_DIALOG_DATA);
 
-  title! : string;
-  description! : string;
+    protected readonly title = signal<string>('');
+    protected readonly description = signal<string>('');
 
-  constructor(
-    public dialogRef: MatDialogRef<DialogConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+    ngOnInit(): void {
+        this.title.set(this.data.title ?? 'Confirmación');
+        this.description.set(this.data.description ?? '');
+    }
 
-  ngOnInit(): void {
-    this.title = this.data.title;
-    this.description = this.data.description;
-  }
+    onYes(): void {
+        this.dialogRef.close(true);
+    }
 
-  onYes() {
-    this.dialogRef.close(true);
-  }
-
-  onNo() {
-    this.dialogRef.close(false);
-  }
+    onNo(): void {
+        this.dialogRef.close(false);
+    }
 }

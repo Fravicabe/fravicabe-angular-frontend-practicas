@@ -1,0 +1,134 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+import { LoanEditComponent } from '../loan-edit/loan-edit';
+import { LoanService } from '../loan.service';
+import { Loan } from '../model/Loan';
+import { Pageable } from '../../core/model/page/Pageable';
+import { DialogConfirmationComponent } from '../../core/dialog-confirmation/dialog-confirmation';
+
+@Component({
+selector: 'app-loan-list',
+standalone: true,
+templateUrl: './loan-list.page.html',
+styleUrl: './loan-list.page.scss',
+imports: [
+    CommonModule,
+    FormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule
+],
+})
+
+export class LoanListPage implements OnInit {
+
+    // Propiedades de paginación idénticas a Autores
+    pageNumber = 0;
+    pageSize = 5;
+    totalElements = 0;
+
+    // Propiedades de filtrado específicas para Loan
+    filterGameTitle = '';
+    filterClientName = '';
+    filterDate: Date | null = null;
+    // Para adaptar y refrescar la tabla cuando se cambia
+    dataSource = new MatTableDataSource<Loan>();
+
+    // Array de columnas ordenadas
+    displayedColumns: string[] = ['id', 'game', 'client', 'loanDate', 'returnDate', 'action'];
+
+constructor(
+    private loanService: LoanService,
+    private dialog: MatDialog
+) {}
+
+    ngOnInit(): void {
+        this.loadPage();
+    }
+
+    loadPage(event?: PageEvent): void {
+        
+        // Si el filtro es sin evento, carga la 0, si no, a la del evento
+        if (!event) {
+            this.pageNumber = 0;
+        } else {
+            this.pageNumber = event.pageIndex;
+            this.pageSize = event.pageSize;
+        }
+        // Constante para ordenar por id de forma ascendente la página y el tamaño ya definidos
+        const pageable: Pageable = {
+            pageNumber: this.pageNumber,
+            pageSize: this.pageSize,
+            sort: [{ property: 'id', direction: 'ASC' }],
+        };
+
+        // Estructura de los parámetros de búsqueda para llamar al backend
+        const searchParams = {
+            gameTitle: this.filterGameTitle,
+            clientName: this.filterClientName,
+            date: this.filterDate,
+            pageable: pageable
+        };
+        // Llamada al backend para actualizar la tabla
+        this.loanService.getLoans(searchParams).subscribe(data => {
+            this.dataSource.data = data.content ?? [];
+            this.pageNumber = data.pageable?.pageNumber ?? 0;
+            this.pageSize = data.pageable?.pageSize ?? this.pageSize;
+            this.totalElements = data.totalElements ?? 0;
+        });
+}
+
+    // Método que limpia el formulario de búsqueda
+    clearFilters(): void {
+        this.filterGameTitle = '';
+        this.filterClientName = '';
+        this.filterDate = null;
+        this.loadPage();
+    }
+    // Lo mismo que en autores, etc.
+    createLoan(): void {
+        const dialogRef = this.dialog.open(LoanEditComponent, { data: {} });
+        dialogRef.afterClosed().subscribe(() => this.loadPage());
+}
+
+    editLoan(loan: Loan): void {
+        const dialogRef = this.dialog.open(LoanEditComponent, {
+            data: { loan }
+        });
+        dialogRef.afterClosed().subscribe(() => this.loadPage());
+    }
+
+    deleteLoan(loan: Loan): void {
+        const dialogRef = this.dialog.open(DialogConfirmationComponent, {
+        data: {
+            title: 'Eliminar préstamo',
+            description:
+                'Atención si borra el préstamo se perderán sus datos.<br> ¿Desea eliminar el préstamo registrado?',
+        },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+        if (result && loan.id != null) {
+            this.loanService.deleteLoan(loan.id).subscribe(() => {
+            this.loadPage();
+        });
+        }
+    });
+    }
+}

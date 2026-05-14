@@ -23,7 +23,7 @@ import { CategoryService } from '../category.service';
   templateUrl: './category-edit.html',
   styleUrls: ['./category-edit.scss']
 })
-export class CategoryEditComponent {
+export class CategoryEditComponent implements OnInit {
 
   category: Category = {
     id: 0,

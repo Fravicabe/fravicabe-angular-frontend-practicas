@@ -1,0 +1,45 @@
+.container {
+    padding: 24px;
+    min-width: 450px; 
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    h2 {
+        margin: 0 0 10px 0;
+        font-weight: 500;
+    }
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    mat-form-field {
+        width: 100%;
+    }
+
+    .dates-row {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        width: 100%;
+
+        mat-form-field {
+            flex: 1;
+        }
+    }
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+
+    button {
+        padding: 8px 20px;
+    }
+}

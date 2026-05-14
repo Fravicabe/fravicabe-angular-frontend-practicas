@@ -5,8 +5,8 @@ import { CategoryService } from './category.service';
 
 @Component({
   selector: 'app-category-list',
-  templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.scss']
+  templateUrl: './category-list.page.html',
+  styleUrls: ['./category-list.page.scss']
 })
 export class CategoryListComponent implements OnInit {
 

@@ -1,0 +1,54 @@
+<div class="container">
+    
+    @if (id()) {
+    <h2>Editar préstamo</h2>
+    } @else {
+    <h2>Nuevo préstamo</h2>
+    }
+
+    <form>
+        <mat-form-field appearance="outline">
+            <mat-label>Identificador</mat-label>
+            <input type="text" matInput [ngModel]="id()" name="id" disabled>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Juego</mat-label>
+            <mat-select [ngModel]="game()" (ngModelChange)="game.set($event)" name="game" [compareWith]="compGames" required>
+                @for (g of games(); track g.id) {
+                    <mat-option [value]="g">{{ g.title }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Cliente</mat-label>
+            <mat-select [ngModel]="client()" (ngModelChange)="client.set($event)" name="client" [compareWith]="compClients" required>
+                @for (c of clients(); track c.id) {
+                    <mat-option [value]="c">{{ c.name }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <div class="dates-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de préstamo</mat-label>
+                <input matInput [matDatepicker]="loanDatePicker" [ngModel]="loanDate()" (ngModelChange)="loanDate.set($event)" name="loanDate" required>
+                <mat-datepicker-toggle matSuffix [for]="loanDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #loanDatePicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de devolución</mat-label>
+                <input matInput [matDatepicker]="returnDatePicker" [ngModel]="returnDate()" (ngModelChange)="returnDate.set($event)" name="returnDate" required>
+                <mat-datepicker-toggle matSuffix [for]="returnDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #returnDatePicker></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </form>
+
+    <div class="buttons">
+        <button mat-stroked-button (click)="onClose()">Cancelar</button>
+        <button mat-flat-button color="primary" (click)="onSave()">Guardar</button>
+    </div>
+</div>
