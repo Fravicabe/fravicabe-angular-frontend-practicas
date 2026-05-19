@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -53,10 +53,8 @@ export class LoanListPage implements OnInit {
     // Array de columnas ordenadas
     displayedColumns: string[] = ['id', 'game', 'client', 'loanDate', 'returnDate', 'action'];
 
-constructor(
-    private loanService: LoanService,
-    private dialog: MatDialog
-) {}
+    private readonly loanService = inject(LoanService);
+    private readonly dialog = inject(MatDialog);
 
     ngOnInit(): void {
         this.loadPage();

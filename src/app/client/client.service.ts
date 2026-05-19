@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { Client } from './model/Client';
@@ -8,8 +8,7 @@ import { Client } from './model/Client';
     providedIn: 'root'
 })
 export class ClientService {
-
-    constructor(private http: HttpClient) { }
+    private readonly http = inject(HttpClient);
 
     getClient(): Observable<Client[]> {
         return this.http.get<Client[]>('http://localhost:8080/client');

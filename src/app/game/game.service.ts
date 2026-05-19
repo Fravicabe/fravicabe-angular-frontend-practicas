@@ -7,9 +7,6 @@ import { HttpClient } from '@angular/common/http';
     providedIn: 'root'
 })
 export class GameService {
-
-    constructor() { }
-
     protected readonly http = inject(HttpClient);
 
     private baseUrl = 'http://localhost:8080/game';

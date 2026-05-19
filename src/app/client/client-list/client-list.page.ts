@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,15 +26,11 @@ import { ClientService } from '../client.service';
     styleUrl: './client-list.page.scss'
 })
 export class ClientListPage implements OnInit {
-
     dataSource = new MatTableDataSource<Client>();
     displayedColumns: string[] = ['id', 'name', 'action'];
 
-
-constructor(
-    private clientService: ClientService,
-    public dialog: MatDialog
-) {}
+    private clientService = inject(ClientService);
+    public dialog = inject(MatDialog);
 
 ngOnInit(): void {
     this.clientService.getClient().subscribe((client: Client[]) => {
