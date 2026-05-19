@@ -30,7 +30,7 @@ export class ClientListPage implements OnInit {
     displayedColumns: string[] = ['id', 'name', 'action'];
 
     private clientService = inject(ClientService);
-    public dialog = inject(MatDialog);
+    private dialog = inject(MatDialog);
 
 ngOnInit(): void {
     this.clientService.getClient().subscribe((client: Client[]) => {
