@@ -22,7 +22,7 @@ export class ClientService {
         return this.http.put<Client>(url, client);
 }
 
-    deleteClient(idClient : number): Observable<any> {
-        return this.http.delete('http://localhost:8080/client/' + idClient);
+    deleteClient(idClient : number): Observable<void> {
+        return this.http.delete<void>('http://localhost:8080/client/' + idClient);
     }  
 }

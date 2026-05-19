@@ -50,9 +50,9 @@ export class LoanEditComponent implements OnInit {
     protected readonly clients = signal<Client[]>([]);
 
     // Uso los signals como se hace en autores para que se actualice
-    protected readonly id = signal<any>(null);
-    protected readonly game = signal<any>(null);
-    protected readonly client = signal<any>(null);
+    protected readonly id = signal<number | null>(null);
+    protected readonly game = signal<Game | null>(null);
+    protected readonly client = signal<Client | null>(null);
     protected readonly loanDate = signal<Date | null>(null);
     protected readonly returnDate = signal<Date | null>(null);
 

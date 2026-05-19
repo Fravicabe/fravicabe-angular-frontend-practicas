@@ -1,57 +1,58 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CategoryService } from '../category.service';
+import { Category } from '../model/Category';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
-import { Category } from '../model/Category';
-import { CategoryService } from '../category.service';
-
 @Component({
-  selector: 'app-category-edit',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
-  ],
-  templateUrl: './category-edit.html',
-  styleUrls: ['./category-edit.scss']
+    selector: 'app-category-edit',
+    standalone: true,
+    imports: [
+        FormsModule, 
+        ReactiveFormsModule, 
+        MatFormFieldModule, 
+        MatInputModule, 
+        MatButtonModule 
+    ],
+    templateUrl: './category-edit.html',
+    styleUrl: './category-edit.scss'
 })
 export class CategoryEditComponent implements OnInit {
+    protected readonly dialogRef = inject(MatDialogRef<CategoryEditComponent>);
+    protected readonly data = inject(MAT_DIALOG_DATA) as { category: Category };
+    protected readonly categoryService = inject(CategoryService);
 
-  category: Category = {
-    id: 0,
-    name: ''
-  };
+    protected readonly id = signal<number | null>(null);
+    protected readonly name = signal<string | null>(null);
 
-  constructor(
-    public dialogRef: MatDialogRef<CategoryEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private categoryService: CategoryService
-  ) {}
-
-  ngOnInit(): void {
-    if (this.data.category != null) {
-      this.category = Object.assign({}, this.data.category);
+    ngOnInit(): void {
+        this.loadFormData(this.data.category ?? null);
     }
-    else {
-      this.category = new Category();
+
+    loadFormData(initialData: Category | null): void {
+        this.id.set(initialData?.id ?? null);
+        this.name.set(initialData?.name ?? null);
     }
-  }
 
-  onClose(): void {
-    this.dialogRef.close();
-  }
+    onSave(): void {
+        const id = this.id();
+        const name = this.name();
 
-  onSave(): void {
-    this.categoryService.saveCategory(this.category).subscribe(result => {
-      this.dialogRef.close(result);
-    });
-  }
+        if (!name) {
+            return; 
+        }
+
+        const category: Category = { id, name } as Category;
+
+        this.categoryService.saveCategory(category).subscribe(() => {
+            this.dialogRef.close(true);
+        });
+    }
+
+    onClose(): void {
+        this.dialogRef.close();
+    }
 }

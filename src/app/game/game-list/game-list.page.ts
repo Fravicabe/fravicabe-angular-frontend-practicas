@@ -58,12 +58,12 @@ export class GameListPage implements OnInit {
 
     
     onSearch(): void {
-      const title = this.filterTitle();
-      const category = this.filterCategory();
+        const title = this.filterTitle();
+        const category = this.filterCategory();
 
-      const categoryId = category ? category.id : undefined;
+        const categoryId = category ? category.id : undefined;
 
-      this.gameService
+        this.gameService
         .getGames(title, categoryId)
         .subscribe(games => this.games.set(games));
     }

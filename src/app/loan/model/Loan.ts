@@ -1,4 +1,4 @@
-import { Game } from "../../game/game";
+import { Game } from "../../game/model/Game";
 import { Client } from "../../client/model/Client";
 
 export class Loan {
