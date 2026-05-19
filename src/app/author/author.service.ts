@@ -10,8 +10,6 @@ import { AUTHOR_DATA_LIST } from './mock-authors-list';
     providedIn: 'root',
 })
 export class AuthorService {
-    constructor() {}
-
     protected readonly http = inject(HttpClient);
 
     private baseUrl = 'http://localhost:8080/author';
@@ -20,14 +18,12 @@ export class AuthorService {
         return this.http.post<PaginatedData<Author>>(this.baseUrl, { pageable: pageable });
     }   
 
-    
     saveAuthor(author: Author): Observable<Author> {
         const { id } = author;
         const url = id ? `${this.baseUrl}/${id}` : this.baseUrl;
 
         return this.http.put<Author>(url, author);
     }
-
 
     deleteAuthor(idAuthor: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${idAuthor}`);

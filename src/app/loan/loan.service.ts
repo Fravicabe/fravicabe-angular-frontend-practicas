@@ -18,8 +18,6 @@ export interface LoanSearch {
 })
 
 export class LoanService {
-    constructor() {}
-
     protected readonly http = inject(HttpClient);
     // Definimos la puerta del backend
     private baseUrl = 'http://localhost:8080/loan';

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { Category } from './model/Category';
@@ -8,8 +8,7 @@ import { CATEGORY_DATA } from './model/mock.categories';
   providedIn: 'root'
 })
 export class CategoryService {
-
-  constructor(private http: HttpClient) { }
+  private readonly http = inject(HttpClient);
 
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>('http://localhost:8080/category');

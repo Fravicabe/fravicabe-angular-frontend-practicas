@@ -1,6 +1,6 @@
 
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
@@ -31,7 +31,6 @@ import { DialogConfirmationComponent } from '../../core/dialog-confirmation/dial
 
 
 export class AuthorListPage implements OnInit {
-
   pageNumber = 0;
   pageSize = 5;
   totalElements = 0;
@@ -39,10 +38,8 @@ export class AuthorListPage implements OnInit {
   dataSource = new MatTableDataSource<Author>();
   displayedColumns: string[] = ['id', 'name', 'nationality', 'action'];
 
-  constructor(
-    private authorService: AuthorService,
-    private dialog: MatDialog
-  ) {}
+  private readonly authorService = inject(AuthorService);
+  private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
     this.loadPage();

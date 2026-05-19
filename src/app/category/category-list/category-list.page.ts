@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,15 +25,11 @@ import { CategoryService } from '../category.service';
     styleUrl: './category-list.page.scss'
 })
 export class CategoryListPage implements OnInit {
-
     dataSource = new MatTableDataSource<Category>();
     displayedColumns: string[] = ['id', 'name', 'action'];
 
-
-constructor(
-    private categoryService: CategoryService,
-    public dialog: MatDialog
-) {}
+    private readonly categoryService = inject(CategoryService);
+    private readonly dialog = inject(MatDialog);
 
 ngOnInit(): void {
     this.categoryService.getCategories().subscribe(categories => {
