@@ -22,7 +22,7 @@ export class CategoryService {
         return this.http.put<Category>(url, category);
   }
 
-  deleteCategory(idCategory : number): Observable<any> {
-    return this.http.delete('http://localhost:8080/category/' + idCategory);
+  deleteCategory(idCategory : number): Observable<void> {
+    return this.http.delete<void>('http://localhost:8080/category/' + idCategory);
   }  
 }

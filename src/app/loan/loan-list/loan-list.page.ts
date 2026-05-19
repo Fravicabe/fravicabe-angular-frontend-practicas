@@ -12,7 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 import { LoanEditComponent } from '../loan-edit/loan-edit';
-import { LoanService } from '../loan.service';
+import { LoanSearch, LoanService } from '../loan.service';
 import { Loan } from '../model/Loan';
 import { Pageable } from '../../core/model/page/Pageable';
 import { DialogConfirmationComponent } from '../../core/dialog-confirmation/dialog-confirmation';
@@ -79,7 +79,7 @@ constructor(
         };
 
         // Estructura de los parámetros de búsqueda para llamar al backend
-        const searchParams = {
+        const searchParams: LoanSearch = {
             gameTitle: this.filterGameTitle,
             clientName: this.filterClientName,
             date: this.filterDate,

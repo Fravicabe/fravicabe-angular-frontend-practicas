@@ -56,7 +56,7 @@ editClient(client: Client) {
         data: { client: client }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(() => {
         this.ngOnInit();
     });
 }

@@ -1,75 +1,60 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ClientService } from '../client.service';
+import { Client } from '../model/Client';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import Swal from 'sweetalert2';
-
-import { Client } from '../model/Client';
-import { ClientService } from '../client.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
-selector: 'app-client-edit',
-standalone: true,
-imports: [
-    CommonModule,
-    FormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
-],
+    selector: 'app-client-edit',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule, 
+        ReactiveFormsModule, 
+        MatFormFieldModule, 
+        MatInputModule, 
+        MatButtonModule 
+    ],
     templateUrl: './client-edit.html',
-    styleUrls: ['./client-edit.scss']
+    styleUrl: './client-edit.scss'
 })
 export class ClientEditComponent implements OnInit {
+    protected readonly dialogRef = inject(MatDialogRef<ClientEditComponent>);
+    protected readonly data = inject(MAT_DIALOG_DATA) as { client: Client };
+    protected readonly clientService = inject(ClientService);
 
-client: Client = {
-    id: 0,
-    name: ''
-};
+    protected readonly id = signal<number | null>(null);
+    protected readonly name = signal<string | null>(null);
 
-constructor(
-    public dialogRef: MatDialogRef<ClientEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private clientService: ClientService
-) {}
-
-ngOnInit(): void {
-    if (this.data.client != null) {
-        this.client = Object.assign({}, this.data.client);
+    ngOnInit(): void {
+        this.loadFormData(this.data.client ?? null);
     }
-    else {
-        this.client = new Client();
+
+    loadFormData(initialData: Client | null): void {
+        this.id.set(initialData?.id ?? null);
+        this.name.set(initialData?.name ?? null);
     }
-}
 
-onClose(): void {
-    this.dialogRef.close();
-}
+    onSave(): void {
+        const id = this.id();
+        const name = this.name();
 
-onSave(): void {
-    this.clientService.saveClient(this.client).subscribe({
-        next: (result) => {
-            this.dialogRef.close(result);
-        },
-        error: (httpError) => {
-            const serverMessage = httpError.error?.message;
-            const finalMessage = (serverMessage && serverMessage !== 'No message available') 
-                ? 'El nombre del cliente ya existe en el sistema.' 
-                : 'Ocurrió un error inesperado al intentar guardar.';
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Error al registrar',
-                text: finalMessage,
-                confirmButtonColor: '#d63030',
-                // Para que la ventanita de alerta no quede detrás de la de crear/editar
-                target: '.mat-mdc-dialog-container' 
-            });
+        if (!name) {
+            return; 
         }
-    });
-}
+
+        const client: Client = { id, name } as Client;
+
+        this.clientService.saveClient(client).subscribe(() => {
+            this.dialogRef.close(true);
+        });
+    }
+
+    onClose(): void {
+        this.dialogRef.close();
+    }
 }
