@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Category } from './model/Category';
-import { CATEGORY_DATA } from './model/mock.categories';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class CategoryService {
   private readonly http = inject(HttpClient);
 
