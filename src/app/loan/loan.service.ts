@@ -8,7 +8,7 @@ import { Pageable } from '../core/model/page/Pageable';
 export interface LoanSearch {
     gameTitle?: string;  
     clientName?: string; 
-    date?: Date | string | null;
+    date?: string | null;
     pageable: Pageable;
 }
 

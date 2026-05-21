@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import Swal from 'sweetalert2';
 
@@ -34,7 +34,7 @@ import { Client } from '../../client/model/Client';
         MatNativeDateModule,
     ],
     // Para el desplegable de fechas
-    providers: [provideNativeDateAdapter()], 
+    providers: [provideNativeDateAdapter(), {provide: MAT_DATE_LOCALE, useValue: 'es-ES'}], 
     templateUrl: './loan-edit.html',
     styleUrl: './loan-edit.scss',
 })
@@ -56,6 +56,25 @@ export class LoanEditComponent implements OnInit {
     protected readonly loanDate = signal<Date | null>(null);
     protected readonly returnDate = signal<Date | null>(null);
 
+    // Aquí me he tenido que ayudar un poco de mi primo ElIAs porque no solucionaba el problema
+    // de fechas de ninguna manera
+
+    parseDate(value: string | Date | null | undefined): Date | null {
+        if (!value) return null;
+        if (value instanceof Date) return value;
+        const [y,m,d] = value.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    formatDate(date: Date | null): string | null {
+        if (!date) return null;
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+
     // Si inicia en null, nuevo, si no, modifica
     loadFormData(initialData: Loan | null) {
         if (!initialData) {
@@ -71,8 +90,8 @@ export class LoanEditComponent implements OnInit {
         this.game.set(initialData.game ?? null);
         this.client.set(initialData.client ?? null);
         // Asegura que se pinten las fechas bien aunque desde el backend no sean del mismo formato
-        this.loanDate.set(initialData.loanDate ? new Date(initialData.loanDate) : null);
-        this.returnDate.set(initialData.returnDate ? new Date(initialData.returnDate) : null);
+        this.loanDate.set(this.parseDate(initialData.loanDate ?? null));
+        this.returnDate.set(this.parseDate(initialData.returnDate ?? null));
     }
 
     ngOnInit(): void {
@@ -99,8 +118,8 @@ export class LoanEditComponent implements OnInit {
         id: this.id() ?? undefined,
         game: this.game() ?? undefined,
         client: this.client() ?? undefined,
-        loanDate: this.loanDate() ?? undefined,
-        returnDate: this.returnDate() ?? undefined,
+        loanDate: this.formatDate(this.loanDate()) ?? undefined,
+        returnDate: this.formatDate(this.returnDate()) ?? undefined,
     };
 
     this.loanService.saveLoan(loan).subscribe({

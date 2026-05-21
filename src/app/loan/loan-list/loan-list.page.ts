@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 
 import { LoanEditComponent } from '../loan-edit/loan-edit';
 import { LoanSearch, LoanService } from '../loan.service';
@@ -22,6 +22,10 @@ selector: 'app-loan-list',
 standalone: true,
 templateUrl: './loan-list.page.html',
 styleUrl: './loan-list.page.scss',
+providers: [
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES'}
+],
 imports: [
     CommonModule,
     FormsModule,
@@ -38,6 +42,9 @@ imports: [
 
 export class LoanListPage implements OnInit {
 
+    private readonly loanService = inject(LoanService);
+    private readonly dialog = inject(MatDialog);
+
     // Propiedades de paginación idénticas a Autores
     pageNumber = 0;
     pageSize = 5;
@@ -53,15 +60,20 @@ export class LoanListPage implements OnInit {
     // Array de columnas ordenadas
     displayedColumns: string[] = ['id', 'game', 'client', 'loanDate', 'returnDate', 'action'];
 
-    private readonly loanService = inject(LoanService);
-    private readonly dialog = inject(MatDialog);
+    // Helper para corregir un pequeño bug en las fechas
+    formatDate(date: Date | null): string | null {
+        if (!date) return null;
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
 
     ngOnInit(): void {
         this.loadPage();
     }
 
     loadPage(event?: PageEvent): void {
-        
         // Si el filtro es sin evento, carga la 0, si no, a la del evento
         if (!event) {
             this.pageNumber = 0;
@@ -80,7 +92,7 @@ export class LoanListPage implements OnInit {
         const searchParams: LoanSearch = {
             gameTitle: this.filterGameTitle,
             clientName: this.filterClientName,
-            date: this.filterDate,
+            date: this.formatDate(this.filterDate),
             pageable: pageable
         };
         // Llamada al backend para actualizar la tabla
